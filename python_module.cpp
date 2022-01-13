@@ -11,7 +11,7 @@
 using namespace Eigen;
 namespace py = pybind11;
 
-PYBIND11_MODULE(pyceres_factors, m)
+PYBIND11_MODULE(PyCeresFactors, m)
 {
     m.doc() = "Python binding module for custom Ceres factors.";
 
