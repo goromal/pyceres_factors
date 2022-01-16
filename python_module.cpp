@@ -18,4 +18,12 @@ PYBIND11_MODULE(PyCeresFactors, m)
     // SO3 Factors
     m.def("SO3Parameterization", &SO3Parameterization::Create);
     m.def("SO3Factor", &SO3Factor::Create);
+
+    // SE3 Factors
+    m.def("SE3Parameterization", &SE3Parameterization::Create);
+    m.def("RelSE3Factor", &RelSE3Factor::Create);
+
+    // Specific Sensor Factors
+    m.def("RangeFactor", &RangeFactor::Create);
+    m.def("AltFactor", &AltFactor::Create);
 }
