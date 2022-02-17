@@ -26,4 +26,7 @@ PYBIND11_MODULE(PyCeresFactors, m)
     // Specific Sensor Factors
     m.def("RangeFactor", &RangeFactor::Create);
     m.def("AltFactor", &AltFactor::Create);
+
+    // Time-syncing Factors
+    m.def("TimeSyncAttFactor", &TimeSyncAttFactor::Create);
 }

@@ -42,3 +42,22 @@ class TestFactors:
         ceres.Solve(options, problem, summary)
         assert np.allclose(x[0], xhat[0])
         assert np.allclose(x[1], xhat[1])
+
+    def test_tsattfactor(self):
+        np.random.seed(RSEED)
+        Q = np.eye(3)
+        qref = SO3.random()
+        w = np.array([0.5,1.0,-2.0])
+        dt_true = np.array([0.2])
+        dt_hat = np.array([0.0])
+        q = qref + (-dt_true * w)
+        problem = ceres.Problem()
+        problem.AddParameterBlock(dt_hat, 1)
+        problem.AddResidualBlock(factors.TimeSyncAttFactor(qref.array(), q.array(), w, Q), None, dt_hat)
+        options = ceres.SolverOptions()
+        options.max_num_iterations = 25
+        options.linear_solver_type = ceres.LinearSolverType.DENSE_QR
+        options.minimizer_progress_to_stdout = True
+        summary = ceres.Summary()
+        ceres.Solve(options, problem, summary)
+        assert np.allclose(dt_true, dt_hat)
