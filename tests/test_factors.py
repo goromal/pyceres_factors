@@ -57,7 +57,7 @@ class TestFactors:
         options = ceres.SolverOptions()
         options.max_num_iterations = 25
         options.linear_solver_type = ceres.LinearSolverType.DENSE_QR
-        options.minimizer_progress_to_stdout = True
+        options.minimizer_progress_to_stdout = False
         summary = ceres.Summary()
         ceres.Solve(options, problem, summary)
         assert np.allclose(dt_true, dt_hat)
