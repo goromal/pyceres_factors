@@ -27,6 +27,8 @@ PYBIND11_MODULE(PyCeresFactors, m)
     m.def("RangeFactor", &RangeFactor::Create);
     m.def("AltFactor", &AltFactor::Create);
 
-    // Time-syncing Factors
+    // Calibration Factors
     m.def("TimeSyncAttFactor", &TimeSyncAttFactor::Create);
+    m.def("SO3OffsetFactor", &SO3OffsetFactor::Create);
+    m.def("SE3OffsetFactor", &SE3OffsetFactor::Create);
 }

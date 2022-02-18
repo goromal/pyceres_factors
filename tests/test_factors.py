@@ -61,3 +61,41 @@ class TestFactors:
         summary = ceres.Summary()
         ceres.Solve(options, problem, summary)
         assert np.allclose(dt_true, dt_hat)
+
+    def test_so3offsetfactor(self):
+        np.random.seed(RSEED)
+        Q = np.eye(3)
+        q = SO3.random()
+        q_off = SO3.random()
+        q_ref = q * q_off
+        q_off_hat = SO3.identity().array()
+        problem = ceres.Problem()
+        problem.AddParameterBlock(q_off_hat, 4, factors.SO3Parameterization())
+        problem.AddResidualBlock(factors.SO3OffsetFactor(q_ref.array(), q.array(), Q),
+                                 None, q_off_hat)
+        options = ceres.SolverOptions()
+        options.max_num_iterations = 25
+        options.linear_solver_type = ceres.LinearSolverType.DENSE_QR
+        options.minimizer_progress_to_stdout = False
+        summary = ceres.Summary()
+        ceres.Solve(options, problem, summary)
+        assert np.allclose(q_off_hat, q_off.array())
+
+    def test_se3offsetfactor(self):
+        np.random.seed(RSEED)
+        Q = np.eye(6)
+        T = SE3.random()
+        T_off = SE3.random()
+        T_ref = T * T_off
+        T_off_hat = SE3.identity().array()
+        problem = ceres.Problem()
+        problem.AddParameterBlock(T_off_hat, 7, factors.SE3Parameterization())
+        problem.AddResidualBlock(factors.SE3OffsetFactor(T_ref.array(), T.array(), Q),
+                                 None, T_off_hat)
+        options = ceres.SolverOptions()
+        options.max_num_iterations = 25
+        options.linear_solver_type = ceres.LinearSolverType.DENSE_QR
+        options.minimizer_progress_to_stdout = False
+        summary = ceres.Summary()
+        ceres.Solve(options, problem, summary)
+        assert np.allclose(T_off_hat, T_off.array())
