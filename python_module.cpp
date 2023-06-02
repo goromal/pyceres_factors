@@ -1,12 +1,12 @@
-#include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-#include <pybind11/stl.h>
-#include <pybind11/operators.h>
-#include <sstream>
-#include <SO3.h>
 #include <SE3.h>
-#include <ceres-factors/Parameterizations.h>
+#include <SO3.h>
 #include <ceres-factors/Factors.h>
+#include <ceres-factors/Parameterizations.h>
+#include <pybind11/eigen.h>
+#include <pybind11/operators.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <sstream>
 
 using namespace Eigen;
 namespace py = pybind11;
@@ -14,6 +14,12 @@ namespace py = pybind11;
 PYBIND11_MODULE(PyCeresFactors, m)
 {
     m.doc() = "Python binding module for custom Ceres factors.";
+
+    // SO2 Factors
+    m.def("SO2Parameterization", &SO2Parameterization::Create);
+
+    // SE2 Factors
+    m.def("SE2Parameterization", &SE2Parameterization::Create);
 
     // SO3 Factors
     m.def("SO3Parameterization", &SO3Parameterization::Create);
@@ -26,6 +32,7 @@ PYBIND11_MODULE(PyCeresFactors, m)
     // Specific Sensor Factors
     m.def("RangeFactor", &RangeFactor::Create);
     m.def("AltFactor", &AltFactor::Create);
+    m.def("RangeBearing2DFactor", &RangeBearing2DFactor::Create);
 
     // Calibration Factors
     m.def("TimeSyncAttFactor", &TimeSyncAttFactor::Create);
