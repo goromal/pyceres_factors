@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from geometry import SO3, SE3
+from geometry import SO2, SE2, SO3, SE3
 import PyCeres as ceres
 import PyCeresFactors as factors
 RSEED = 144440
@@ -99,3 +99,38 @@ class TestFactors:
         summary = ceres.Summary()
         ceres.Solve(options, problem, summary)
         assert np.allclose(T_off_hat, T_off.array())
+
+    def test_rangebearing2dfactor(self):
+        np.random.seed(RSEED)
+        sigma_d = 0.02
+        sigma_theta = 0.02
+        l = np.array([10.0, -5.0])
+        x = SE2.identity()
+        v = np.array([1.0, 0.0, 0.5])
+        dt = 0.1
+        R_err_hat = SO2.random().array()
+        l_hat = np.random.random(2)
+
+        problem = ceres.Problem()
+        problem.AddParameterBlock(R_err_hat, 2, factors.SO2Parameterization())
+        problem.AddParameterBlock(l_hat, 2)
+
+        for _ in range(100):
+            d = np.linalg.norm(x.t() - l)
+            l_B = x.inverse() * l
+            theta = SO2.fromTwoUnitVectors(np.array([1.,0.]), l_B / d).angle()
+            p = x.t()
+            phi = x.q().angle()
+            problem.AddResidualBlock(factors.RangeBearing2DFactor(d, sigma_d, theta, sigma_theta, p, phi),
+                                     None, l_hat, R_err_hat)
+            x += v * dt
+
+        options = ceres.SolverOptions()
+        options.max_num_iterations = 25
+        options.linear_solver_type = ceres.LinearSolverType.DENSE_QR
+        options.minimizer_progress_to_stdout = False
+        summary = ceres.Summary()
+        ceres.Solve(options, problem, summary)
+
+        assert np.allclose(l_hat, l)
+        assert abs(SO2.fromComplex(R_err_hat).angle()) < 1e-8
