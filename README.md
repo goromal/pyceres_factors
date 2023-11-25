@@ -4,6 +4,8 @@
 
 Python wrappers for custom Ceres Solver factors in the [ceres-factors](https://github.com/goromal/ceres-factors) library.
 
+Some explanations and illustrative examples are available in my public-facing subset of [notes on optimization libraries](https://notes.andrewtorgesen.com/doku.php?id=public:autonomy:implementation:opt-libs).
+
 ## Building / Installing
 
 This library is built with CMake. Most recently tested with the following dependencies:
